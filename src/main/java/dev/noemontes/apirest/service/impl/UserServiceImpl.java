@@ -1,6 +1,8 @@
 package dev.noemontes.apirest.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,13 +34,25 @@ public class UserServiceImpl implements UserService{
 	@Override
 	@Transactional(readOnly = true)
 	public UserDto getUserById(Long id) {
-		return null;
+		Optional<UserEntity> userOptional = userRepository.findById(id);
+		
+		if(userOptional.isPresent()) {
+			return userConverter.convertEntityToDto(userOptional.get());
+		}else {
+			return null;
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<UserDto> getAllUsers() {
-		return null;
+		List<UserEntity> userEntiryList = (List<UserEntity>) userRepository.findAll();
+		
+		if(userEntiryList.size()>0) {
+			return userConverter.convertListEntityToListDto(userEntiryList);
+		}
+		
+		return new ArrayList<UserDto>();
 	}
 
 	@Override

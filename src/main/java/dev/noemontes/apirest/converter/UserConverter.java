@@ -1,5 +1,8 @@
 package dev.noemontes.apirest.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import dev.noemontes.apirest.dto.UserDto;
@@ -36,7 +39,7 @@ public class UserConverter {
 	 * @author noemontes
 	 * @since 1.0.0
 	 * @param userDto
-	 * @return
+	 * @return UserEntity
 	 */
 	public UserEntity convertDtoToEntity(UserDto userDto) {
 		UserEntity userEntity = new UserEntity();
@@ -47,5 +50,27 @@ public class UserConverter {
 		userEntity.setEmail(userDto.getEmail());
 		
 		return userEntity;
+	}
+	
+	/**
+	 * @author noemontes
+	 * @since 1.0.0
+	 * @param userEntityList
+	 * @return List<UserDto>
+	 */
+	public List<UserDto> convertListEntityToListDto(List<UserEntity> userEntityList){
+		List<UserDto> userDtoList = new ArrayList<UserDto>();
+		
+		for(UserEntity userEntity : userEntityList) {
+			UserDto userDto = new UserDto();
+			userDto.setId(userEntity.getId());
+			userDto.setName(userEntity.getName());
+			userDto.setLastName(userEntity.getLastName());
+			userDto.setEmail(userEntity.getEmail());
+			
+			userDtoList.add(userDto);
+		}
+		
+		return userDtoList;
 	}
 }
