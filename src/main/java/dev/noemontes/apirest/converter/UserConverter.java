@@ -41,6 +41,11 @@ public class UserConverter {
 	public UserEntity convertDtoToEntity(UserDto userDto) {
 		UserEntity userEntity = new UserEntity();
 		
+		userEntity.setId(userDto.getId());
+		userEntity.setName(userDto.getName());
+		userEntity.setLastName(userDto.getLastName());
+		userEntity.setEmail(userDto.getEmail());
+		
 		return userEntity;
 	}
 }
