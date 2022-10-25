@@ -11,11 +11,15 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuarios",
+		uniqueConstraints = {
+				@UniqueConstraint(columnNames = {"email"}, name = "emailUnique")
+		})
 @Data
 public class UserEntity{
 	
