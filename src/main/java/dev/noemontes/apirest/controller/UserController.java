@@ -2,8 +2,8 @@ package dev.noemontes.apirest.controller;
 
 import java.util.List;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,7 +19,7 @@ import dev.noemontes.apirest.dto.UserDto;
 import dev.noemontes.apirest.service.UserService;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 public class UserController {
 	
 	@Autowired
@@ -56,14 +56,18 @@ public class UserController {
 	
 	@PutMapping
 	public ResponseEntity<?> editUser(@RequestBody UserDto userDto){
-		return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> removeUser(@PathVariable Long id){
-		userService.deleteUser(id);
-		
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		try {
+			userService.deleteUser(id);
+			
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,24 @@ public class UserServiceImpl implements UserService{
 	public UserDto saveUser(UserDto userDto){
 		UserEntity userEntity = userRepository.save(userConverter.convertDtoToEntity(userDto));
 		return userConverter.convertEntityToDto(userEntity);
+	}
+	
+	@Override
+	@Transactional
+	public UserDto updateUser(UserDto userDto) throws NotFoundException {
+		Optional<UserEntity> opUser = userRepository.findById(userDto.getId());
+		
+		if(opUser.isPresent()) {
+			UserEntity dbUser = opUser.get();
+			dbUser.setName(userDto.getName());
+			dbUser.setLastName(userDto.getLastName());
+			dbUser.setEmail(userDto.getEmail());
+			
+			UserEntity dbUserResponse = userRepository.save(dbUser);
+			return userConverter.convertEntityToDto(dbUserResponse);
+		}else {
+			throw new NotFoundException();
+		} 
 	}
 
 	@Override
@@ -56,7 +75,13 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional
-	public void deleteUser(Long id) {
-		userRepository.deleteById(id);
+	public void deleteUser(Long id) throws NotFoundException{
+		Optional<UserEntity> opUser = userRepository.findById(id);
+		
+		if(opUser.isPresent()) {
+			userRepository.deleteById(id);
+		}else {
+			throw new NotFoundException();
+		}
 	}
 }
