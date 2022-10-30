@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.noemontes.apirest.converter.UserConverter;
 import dev.noemontes.apirest.dto.UserDto;
 import dev.noemontes.apirest.entity.UserEntity;
+import dev.noemontes.apirest.exceptions.UserNotFoundException;
 import dev.noemontes.apirest.repository.UserRepository;
 import dev.noemontes.apirest.service.UserService;
 
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	@Transactional
-	public UserDto updateUser(UserDto userDto) throws NotFoundException {
+	public UserDto updateUser(UserDto userDto) throws UserNotFoundException {
 		Optional<UserEntity> opUser = userRepository.findById(userDto.getId());
 		
 		if(opUser.isPresent()) {
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService{
 			UserEntity dbUserResponse = userRepository.save(dbUser);
 			return userConverter.convertEntityToDto(dbUserResponse);
 		}else {
-			throw new NotFoundException();
+			throw new UserNotFoundException("El usuario con id: " + userDto.getId() + " no existe en base de datos");
 		} 
 	}
 
@@ -75,13 +75,13 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional
-	public void deleteUser(Long id) throws NotFoundException{
+	public void deleteUser(Long id) throws UserNotFoundException{
 		Optional<UserEntity> opUser = userRepository.findById(id);
 		
 		if(opUser.isPresent()) {
 			userRepository.deleteById(id);
 		}else {
-			throw new NotFoundException();
+			throw new UserNotFoundException("El usuario con id: " + id + " no existe en base de datos");
 		}
 	}
 }
