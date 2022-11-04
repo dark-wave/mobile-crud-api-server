@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	@Transactional
-	public UserDto updateUser(UserDto userDto) throws UserNotFoundException {
-		Optional<UserEntity> opUser = userRepository.findById(userDto.getId());
+	public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException {
+		Optional<UserEntity> opUser = userRepository.findById(id);
 		
 		if(opUser.isPresent()) {
 			UserEntity dbUser = opUser.get();
