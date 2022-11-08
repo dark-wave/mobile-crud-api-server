@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +34,15 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	@Transactional
-	public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException {
+	public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, DataIntegrityViolationException {
 		Optional<UserEntity> opUser = userRepository.findById(id);
+		Optional<UserEntity> opUserByEmail = userRepository.findByEmail(userDto.getEmail());
 		
 		if(opUser.isPresent()) {
+			if(opUserByEmail.isPresent() && opUserByEmail.get().getEmail().equalsIgnoreCase(userDto.getEmail())) {
+				
+			}
+			
 			UserEntity dbUser = opUser.get();
 			dbUser.setName(userDto.getName());
 			dbUser.setLastName(userDto.getLastName());

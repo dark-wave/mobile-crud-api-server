@@ -2,9 +2,11 @@ package dev.noemontes.apirest.controller;
 
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +71,8 @@ public class UserController {
 			return ResponseEntity.ok(userUpdated);
 		}catch(UserNotFoundException ex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+		}catch(DataIntegrityViolationException ve) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ve.getMessage());
 		}
 	}
 	
