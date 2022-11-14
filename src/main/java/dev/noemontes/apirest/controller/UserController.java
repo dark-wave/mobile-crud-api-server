@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.noemontes.apirest.dto.UserDto;
+import dev.noemontes.apirest.exceptions.EmailDuplicatedException;
 import dev.noemontes.apirest.exceptions.UserNotFoundException;
 import dev.noemontes.apirest.service.UserService;
 
@@ -71,6 +72,8 @@ public class UserController {
 			return ResponseEntity.ok(userUpdated);
 		}catch(UserNotFoundException ex) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+		}catch(EmailDuplicatedException de) {
+			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(de.getMessage());
 		}catch(DataIntegrityViolationException ve) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ve.getMessage());
 		}

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import dev.noemontes.apirest.converter.UserConverter;
 import dev.noemontes.apirest.dto.UserDto;
 import dev.noemontes.apirest.entity.UserEntity;
+import dev.noemontes.apirest.exceptions.EmailDuplicatedException;
 import dev.noemontes.apirest.exceptions.UserNotFoundException;
 import dev.noemontes.apirest.repository.UserRepository;
 import dev.noemontes.apirest.service.UserService;
@@ -34,13 +35,13 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	@Transactional
-	public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, DataIntegrityViolationException {
+	public UserDto updateUser(Long id, UserDto userDto) throws UserNotFoundException, EmailDuplicatedException, DataIntegrityViolationException {
 		Optional<UserEntity> opUser = userRepository.findById(id);
 		Optional<UserEntity> opUserByEmail = userRepository.findByEmail(userDto.getEmail());
 		
 		if(opUser.isPresent()) {
 			if(opUserByEmail.isPresent() && opUserByEmail.get().getEmail().equalsIgnoreCase(userDto.getEmail())) {
-				
+				throw new EmailDuplicatedException("El email: " + opUserByEmail.get().getEmail() + " se encuentra registrado en base de datos");
 			}
 			
 			UserEntity dbUser = opUser.get();
